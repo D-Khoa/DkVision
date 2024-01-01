@@ -62,14 +62,15 @@
     <Compile Include="Components\DkBaslerCamera.cs" />
     <Compile Include="Components\DkEmgucvCamera.cs" />
     <Compile Include="Components\Enums.cs" />
+    <Compile Include="Components\DkMask.cs" />
+    <Compile Include="Filters\DkCannyFilter.cs" />
+    <Compile Include="Filters\DkGrayFilter.cs" />
+    <Compile Include="Filters\DkHoughCirclesFilter.cs" />
+    <Compile Include="Filters\DkHoughLinesFilter.cs" />
     <Compile Include="Interfaces\IDkCamera.cs" />
+    <Compile Include="Interfaces\IDkFilter.cs" />
     <Compile Include="Interfaces\IDkFrame.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Components\Shapes\DkCircle.cs" />
-    <Compile Include="Components\Shapes\DkLine.cs" />
-    <Compile Include="Components\Shapes\DkRect.cs" />
-    <Compile Include="Components\Shapes\DkShape.cs" />
-    <Compile Include="Components\Shapes\DkEllipse.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="cv110.dll">

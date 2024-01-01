@@ -9,19 +9,21 @@ namespace DkVision.Core.Components
 {
     public class DkFrame : IDkFrame
     {
-        private readonly IDkCamera _camera;
+        private IDkCamera _camera = null;
         private static readonly object _lock = new object();
 
+        public IDkCamera Camera
+        {
+            get => _camera;
+            set => SetCamera(value);
+        }
+        public bool IsAuto { get; set; } = false;
         public int Width { get; private set; }
         public int Height { get; private set; }
 
-        public event EventHandler<Bitmap> FrameChanged;
+        public event Action<Bitmap> FrameChanged;
 
-        public DkFrame(IDkCamera camera)
-        {
-            _camera = camera;
-            _camera.FrameChanged += Camera_FrameChanged;
-        }
+        public DkFrame() { }
 
         public void ChangeSize(Size size)
         {
@@ -30,7 +32,20 @@ namespace DkVision.Core.Components
         }
         protected virtual void OnFrameChanged(Bitmap e)
         {
-            FrameChanged?.Invoke(this, e);
+            FrameChanged?.Invoke(e);
+        }
+        private void SetCamera(IDkCamera camera)
+        {
+            if (_camera != null)
+            {
+                _camera.DestroyCamera();
+                _camera.FrameChanged -= Camera_FrameChanged;
+            }
+            _camera = camera;
+            if (_camera != null)
+            {
+                _camera.FrameChanged += Camera_FrameChanged;
+            }
         }
         private void Camera_FrameChanged(object sender, Bitmap e)
         {

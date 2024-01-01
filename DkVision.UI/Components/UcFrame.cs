@@ -1,6 +1,7 @@
 ﻿using DkVision.Core.Components;
 using DkVision.Core.Interfaces;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -8,83 +9,174 @@ namespace DkVision.UI.Components
 {
     public partial class UcFrame : Panel
     {
-        private IDkFrame _frame;
-        private bool _isPainting;
-        private UcMask _mask;
+        private DkMask _mask;
+        private bool _isAuto = false;
+        private bool _isPainting = false;
+        private bool _isCapturing = false;
+        private readonly IDkFrame _frame = new DkFrame();
+        private readonly Pen _borderPen = new Pen(Brushes.Yellow);
+        private readonly List<DkMask> _lstMasks = new List<DkMask>();
 
-        public ShapeStyle PaintTool { get; set; }
+        public bool IsAuto
+        {
+            get => _isAuto;
+            set => SetAuto(value);
+        }
+        public IDkCamera Camera
+        {
+            get => _frame.Camera;
+            set => _frame.Camera = value;
+        }
+        public ShapeStyle PaintTool
+        {
+            get;
+            set;
+        }
 
         public UcFrame()
         {
             InitializeComponent();
             this.DoubleBuffered = true;
+            Application.Idle += Application_Idle;
+            _frame.FrameChanged += Frame_FrameChanged;
         }
 
-        public void SetFrame(IDkFrame frame)
+        public void CameraCapture()
         {
-            if (_frame != null) _frame.FrameChanged -= Frame_FrameChanged;
-            _frame = frame;
-            if (_frame != null)
+            try
             {
-                _frame.ChangeSize(this.Size);
-                _frame.FrameChanged += Frame_FrameChanged;
+                if (!_isCapturing)
+                {
+                    _isCapturing = true;
+                    Camera?.Capture();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+        }
+
+        private void SetAuto(bool value)
+        {
+            _isAuto = value;
+            CameraCapture();
+        }
+        private void Frame_FrameChanged(Bitmap e)
+        {
+            try
+            {
+                foreach (DkMask mask in _lstMasks)
+                {
+                    if (!_isAuto)
+                    {
+                        //e = mask.Execute(e);
+                    }
+                    DrawMask(e, mask);
+                }
+                if (_isPainting)
+                {
+                    DrawMask(e, _mask);
+                }
+                this.BackgroundImage = e;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+            finally
+            {
+                _isCapturing = false;
+            }
+        }
+        private void DrawMask(Bitmap source, DkMask mask)
+        {
+            using (Graphics g = Graphics.FromImage(source))
+            {
+                switch (mask.Shape)
+                {
+                    case ShapeStyle.Line:
+                        g.DrawLine(_borderPen, mask.BeginPoint, mask.EndPoint);
+                        break;
+                    case ShapeStyle.Rect:
+                        g.DrawRectangle(_borderPen, mask.Rect);
+                        break;
+                    case ShapeStyle.Circle:
+                    case ShapeStyle.Ellipse:
+                        g.DrawEllipse(_borderPen, mask.Rect);
+                        break;
+                    case ShapeStyle.None:
+                    default:
+                        break;
+                }
             }
         }
         protected override void OnSizeChanged(EventArgs e)
         {
-            base.OnSizeChanged(e);
-            _mask?.ChangeSize(this.Size);
-            _frame?.ChangeSize(this.Size);
+            try
+            {
+                base.OnSizeChanged(e);
+                _frame?.ChangeSize(this.Size);
+                foreach (var mask in _lstMasks)
+                {
+                    mask.FrameSize = this.Size;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
         }
-        private void Frame_FrameChanged(object sender, Bitmap e)
-        {
-            this.BackgroundImage = e;
-        }
-
         protected override void OnMouseUp(MouseEventArgs e)
         {
-            base.OnMouseUp(e);
-            if (_isPainting)
+            try
             {
-                _isPainting = false;
-                using (FrmInput frmInput = new FrmInput())
+                base.OnMouseUp(e);
+                if (_isPainting)
                 {
-                    if (frmInput.ShowDialog() == DialogResult.OK)
-                    {
-                        _mask.Header = frmInput.Input;
-                        return;
-                    }
-                    this.Controls.Remove(_mask);
+                    _isPainting = false;
+                    _lstMasks.Add(_mask);
                 }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
             }
         }
         protected override void OnMouseDown(MouseEventArgs e)
         {
-            base.OnMouseDown(e);
-            if (!_isPainting)
+            try
             {
-                _isPainting = true;
-                _mask = new UcMask()
+                base.OnMouseDown(e);
+                if (!_isPainting)
                 {
-                    Location = e.Location,
-                    PaintStyle = PaintTool,
-                    FrameSize = this.Size
-                };
-                this.Controls.Add(_mask);
+                    _isPainting = true;
+                    _mask = new DkMask(e.Location, PaintTool, this.Size);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
             }
         }
         protected override void OnMouseMove(MouseEventArgs e)
         {
-            base.OnMouseMove(e);
-            if (_isPainting)
+            try
             {
-                int w = Math.Abs(e.Location.X - _mask.Location.X);
-                int h = Math.Abs(e.Location.Y - _mask.Location.Y);
-                _mask.Size = new Size(w, h);
-                int x = Math.Min(e.Location.X, _mask.Location.X);
-                int y = Math.Min(e.Location.Y, _mask.Location.Y);
-                _mask.Location = new Point(x, y);
+                base.OnMouseMove(e);
+                if (_isPainting)
+                {
+                    _mask.EndPoint = e.Location;
+                }
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+        }
+        private void Application_Idle(object sender, EventArgs e)
+        {
+            if (_isAuto) CameraCapture();
         }
     }
 }

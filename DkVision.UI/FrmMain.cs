@@ -1,22 +1,16 @@
 ﻿using DkVision.Core.Components;
 using DkVision.Core.Interfaces;
-using DkVision.UI.Components;
 using System;
-using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace DkVision.UI
 {
     public partial class FrmMain : Form
     {
-        private IDkFrame _frame;
-        private IDkCamera _camera;
-        private bool _isAuto = false;
         private readonly TreeNode _rootUsbCamera;
         private readonly TreeNode _rootBaslerCamera;
         private readonly IDkCamera _usbCamera = new DkEmgucvCamera();
         private readonly IDkCamera _baslerCamera = new DkBaslerCamera();
-        private readonly Dictionary<string, UcFrame> _cutFrames = new Dictionary<string, UcFrame>();
 
         public FrmMain()
         {
@@ -44,7 +38,6 @@ namespace DkVision.UI
                 base.OnLoad(e);
                 _usbCamera.GetCameraList();
                 _baslerCamera.GetCameraList();
-                Application.Idle += Application_Idle;
             }
             catch (Exception ex)
             {
@@ -56,9 +49,9 @@ namespace DkVision.UI
             try
             {
                 base.OnClosed(e);
-                _camera?.DestroyCamera();
                 _usbCamera?.DestroyCamera();
                 _baslerCamera?.DestroyCamera();
+                ucMainFrame.Camera?.DestroyCamera();
             }
             catch (Exception ex)
             {
@@ -79,17 +72,6 @@ namespace DkVision.UI
         }
         #endregion
         #region Camera
-        private void Application_Idle(object sender, EventArgs e)
-        {
-            try
-            {
-                if (_isAuto) _camera?.Capture();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-            }
-        }
         private void UsbCamera_CameraListChanged(object sender, string[] e)
         {
             try
@@ -134,17 +116,8 @@ namespace DkVision.UI
             {
                 if (e.Node.Tag is IDkCamera camera)
                 {
-                    _camera?.DestroyCamera();
-                    _camera = camera;
-                    if (_frame != null)
-                    {
-                        //_frame.FrameAdded -= Frame_FrameAdded;
-                        _frame = null;
-                    }
-                    _frame = new DkFrame(_camera);
-                    //_frame.FrameAdded += Frame_FrameAdded;
-                    ucMainFrame.SetFrame(_frame);
-                    _camera.OpenCamera(e.Node.Text);
+                    ucMainFrame.Camera = camera;
+                    ucMainFrame.Camera.OpenCamera(e.Node.Text);
                     ToggleAuto(true);
                 }
             }
@@ -157,8 +130,8 @@ namespace DkVision.UI
         #region Tool buttons
         private void ToggleAuto(bool isAuto)
         {
-            _isAuto = isAuto;
-            if (_isAuto)
+            ucMainFrame.IsAuto = isAuto;
+            if (ucMainFrame.IsAuto)
             {
                 btnLive.Text = "Stop";
                 btnLive.Image = Properties.Resources.p32_stop;
@@ -171,14 +144,20 @@ namespace DkVision.UI
         }
         private void BtnLive_Click(object sender, EventArgs e)
         {
-            ToggleAuto(!_isAuto);
+            try
+            {
+                ToggleAuto(!ucMainFrame.IsAuto);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
         }
         private void BtnCapture_Click(object sender, EventArgs e)
         {
             try
             {
                 ToggleAuto(false);
-                _camera?.Capture();
             }
             catch (Exception ex)
             {

@@ -9,7 +9,7 @@
         Ellipse = 4
     }
 
-    public enum Filters
+    public enum FilterStyle
     {
         None = 0,
         Gray = 1,

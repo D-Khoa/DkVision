@@ -1,4 +1,5 @@
-﻿using Emgu.CV;
+﻿using DkVision.Core.Interfaces;
+using Emgu.CV;
 using Emgu.CV.Structure;
 using System.Drawing;
 
@@ -6,11 +7,11 @@ namespace DkVision.Core.Filters
 {
     public class DkGrayFilter : IDkFilter
     {
-        public Bitmap UpdateFrame(ref Image<Bgr, byte> frame)
+        public Bitmap Execute(Bitmap source)
         {
-            using (Image<Gray, byte> grayFrame = frame.Convert<Gray, byte>())
+            using (Image<Bgr, byte> imgSource = new Image<Bgr, byte>(source))
             {
-                return grayFrame.Bitmap;
+                return imgSource.Convert<Gray, byte>().Bitmap;
             }
         }
     }

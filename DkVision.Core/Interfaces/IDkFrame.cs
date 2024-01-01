@@ -7,7 +7,8 @@ namespace DkVision.Core.Interfaces
     {
         int Width { get; }
         int Height { get; }
-        event EventHandler<Bitmap> FrameChanged;
+        IDkCamera Camera { get; set; }
+        event Action<Bitmap> FrameChanged;
         void ChangeSize(Size size);
     }
 }

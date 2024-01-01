@@ -51,17 +51,11 @@
     <Compile Include="Components\UcFrame.Designer.cs">
       <DependentUpon>UcFrame.cs</DependentUpon>
     </Compile>
-    <Compile Include="Components\UcMask.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Components\UcMask.Designer.cs">
-      <DependentUpon>UcMask.cs</DependentUpon>
-    </Compile>
-    <Compile Include="FrmInput.cs">
+    <Compile Include="FrmChooseFilter.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FrmInput.Designer.cs">
-      <DependentUpon>FrmInput.cs</DependentUpon>
+    <Compile Include="FrmChooseFilter.Designer.cs">
+      <DependentUpon>FrmChooseFilter.cs</DependentUpon>
     </Compile>
     <Compile Include="FrmMain.cs">
       <SubType>Form</SubType>
@@ -90,11 +84,8 @@
     <EmbeddedResource Include="Components\UcFrame.resx">
       <DependentUpon>UcFrame.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Components\UcMask.resx">
-      <DependentUpon>UcMask.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FrmInput.resx">
-      <DependentUpon>FrmInput.cs</DependentUpon>
+    <EmbeddedResource Include="FrmChooseFilter.resx">
+      <DependentUpon>FrmChooseFilter.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FrmMain.resx">
       <DependentUpon>FrmMain.cs</DependentUpon>
@@ -148,6 +139,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\p32_pencil.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Models\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

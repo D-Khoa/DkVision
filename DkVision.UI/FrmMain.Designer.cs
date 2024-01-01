@@ -50,7 +50,6 @@
             this.mnuiBtnExit = new System.Windows.Forms.ToolStripMenuItem();
             this.sttBar = new System.Windows.Forms.StatusStrip();
             this.lbStatus = new System.Windows.Forms.ToolStripStatusLabel();
-            this.trvFilters = new System.Windows.Forms.TreeView();
             this.tlpMainLayout.SuspendLayout();
             this.toolBar.SuspendLayout();
             this.mnuMain.SuspendLayout();
@@ -63,18 +62,17 @@
             this.tlpMainLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 200F));
             this.tlpMainLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tlpMainLayout.Controls.Add(this.toolBar, 0, 0);
-            this.tlpMainLayout.Controls.Add(this.pnlCutFrames, 0, 3);
+            this.tlpMainLayout.Controls.Add(this.pnlCutFrames, 1, 2);
             this.tlpMainLayout.Controls.Add(this.trvCamera, 0, 1);
             this.tlpMainLayout.Controls.Add(this.ucMainFrame, 1, 1);
-            this.tlpMainLayout.Controls.Add(this.trvFilters, 0, 2);
             this.tlpMainLayout.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tlpMainLayout.Location = new System.Drawing.Point(0, 28);
             this.tlpMainLayout.Name = "tlpMainLayout";
-            this.tlpMainLayout.RowCount = 4;
+            this.tlpMainLayout.RowCount = 3;
             this.tlpMainLayout.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tlpMainLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tlpMainLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tlpMainLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tlpMainLayout.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tlpMainLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tlpMainLayout.Size = new System.Drawing.Size(1086, 611);
             this.tlpMainLayout.TabIndex = 2;
             // 
@@ -136,6 +134,7 @@
             this.toolStripLabel2.Name = "toolStripLabel2";
             this.toolStripLabel2.Size = new System.Drawing.Size(53, 36);
             this.toolStripLabel2.Text = "Shape:";
+            this.toolStripLabel2.Visible = false;
             // 
             // sbtnDrawTool
             // 
@@ -149,13 +148,14 @@
             this.sbtnDrawTool.Name = "sbtnDrawTool";
             this.sbtnDrawTool.Size = new System.Drawing.Size(96, 36);
             this.sbtnDrawTool.Text = "None";
+            this.sbtnDrawTool.Visible = false;
             this.sbtnDrawTool.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.SbtnDrawTool_DropDownItemClicked);
             // 
             // noneToolStripMenuItem
             // 
             this.noneToolStripMenuItem.Image = global::DkVision.UI.Properties.Resources.p32_no_pic;
             this.noneToolStripMenuItem.Name = "noneToolStripMenuItem";
-            this.noneToolStripMenuItem.Size = new System.Drawing.Size(158, 26);
+            this.noneToolStripMenuItem.Size = new System.Drawing.Size(236, 38);
             this.noneToolStripMenuItem.Tag = "0";
             this.noneToolStripMenuItem.Text = "None";
             // 
@@ -163,7 +163,7 @@
             // 
             this.btnDrawLineTool.Image = global::DkVision.UI.Properties.Resources.p32_line_color;
             this.btnDrawLineTool.Name = "btnDrawLineTool";
-            this.btnDrawLineTool.Size = new System.Drawing.Size(158, 26);
+            this.btnDrawLineTool.Size = new System.Drawing.Size(236, 38);
             this.btnDrawLineTool.Tag = "1";
             this.btnDrawLineTool.Text = "Line";
             // 
@@ -171,7 +171,7 @@
             // 
             this.btnDrawRectTool.Image = global::DkVision.UI.Properties.Resources.p32_rectangle_round;
             this.btnDrawRectTool.Name = "btnDrawRectTool";
-            this.btnDrawRectTool.Size = new System.Drawing.Size(158, 26);
+            this.btnDrawRectTool.Size = new System.Drawing.Size(236, 38);
             this.btnDrawRectTool.Tag = "2";
             this.btnDrawRectTool.Text = "Rectangle";
             // 
@@ -179,7 +179,7 @@
             // 
             this.btnDrawCircleTool.Image = global::DkVision.UI.Properties.Resources.p32_circle_color;
             this.btnDrawCircleTool.Name = "btnDrawCircleTool";
-            this.btnDrawCircleTool.Size = new System.Drawing.Size(158, 26);
+            this.btnDrawCircleTool.Size = new System.Drawing.Size(236, 38);
             this.btnDrawCircleTool.Tag = "3";
             this.btnDrawCircleTool.Text = "Circle";
             // 
@@ -193,11 +193,10 @@
             // 
             // pnlCutFrames
             // 
-            this.tlpMainLayout.SetColumnSpan(this.pnlCutFrames, 2);
             this.pnlCutFrames.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlCutFrames.Location = new System.Drawing.Point(3, 442);
+            this.pnlCutFrames.Location = new System.Drawing.Point(203, 442);
             this.pnlCutFrames.Name = "pnlCutFrames";
-            this.pnlCutFrames.Size = new System.Drawing.Size(1080, 166);
+            this.pnlCutFrames.Size = new System.Drawing.Size(880, 166);
             this.pnlCutFrames.TabIndex = 6;
             // 
             // trvCamera
@@ -205,17 +204,19 @@
             this.trvCamera.Dock = System.Windows.Forms.DockStyle.Fill;
             this.trvCamera.Location = new System.Drawing.Point(3, 42);
             this.trvCamera.Name = "trvCamera";
-            this.trvCamera.Size = new System.Drawing.Size(194, 194);
+            this.trvCamera.Size = new System.Drawing.Size(194, 394);
             this.trvCamera.TabIndex = 8;
             // 
             // ucMainFrame
             // 
             this.ucMainFrame.BackColor = System.Drawing.Color.White;
             this.ucMainFrame.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.ucMainFrame.Camera = null;
             this.ucMainFrame.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ucMainFrame.IsAuto = false;
             this.ucMainFrame.Location = new System.Drawing.Point(203, 42);
             this.ucMainFrame.Name = "ucMainFrame";
-            this.tlpMainLayout.SetRowSpan(this.ucMainFrame, 2);
+            this.ucMainFrame.PaintTool = DkVision.Core.Components.ShapeStyle.None;
             this.ucMainFrame.Size = new System.Drawing.Size(880, 394);
             this.ucMainFrame.TabIndex = 9;
             // 
@@ -261,14 +262,6 @@
             this.lbStatus.Name = "lbStatus";
             this.lbStatus.Size = new System.Drawing.Size(45, 20);
             this.lbStatus.Text = "None";
-            // 
-            // trvFilters
-            // 
-            this.trvFilters.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.trvFilters.Location = new System.Drawing.Point(3, 242);
-            this.trvFilters.Name = "trvFilters";
-            this.trvFilters.Size = new System.Drawing.Size(194, 194);
-            this.trvFilters.TabIndex = 10;
             // 
             // FrmMain
             // 
@@ -318,6 +311,5 @@
         private System.Windows.Forms.FlowLayoutPanel pnlCutFrames;
         private System.Windows.Forms.TreeView trvCamera;
         private Components.UcFrame ucMainFrame;
-        private System.Windows.Forms.TreeView trvFilters;
     }
 }
