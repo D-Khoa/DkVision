@@ -22,8 +22,9 @@ namespace DkVision.Core.Components
 
         public void Capture()
         {
-            if (_camera != null)
+            if (_camera != null && !_isRunning)
             {
+                _isRunning = true;
                 Configuration.AcquireSingleFrame(_camera, null);
                 _camera.StreamGrabber.Start(1, GrabStrategy.OneByOne, GrabLoop.ProvidedByStreamGrabber);
                 //using (IGrabResult result = _camera.StreamGrabber.GrabOne(1000))
@@ -88,6 +89,7 @@ namespace DkVision.Core.Components
         {
             lock (_lock)
             {
+                _isRunning = false;
                 using (IGrabResult result = e.GrabResult.Clone())
                 {
                     if (result.GrabSucceeded)

@@ -45,7 +45,7 @@ namespace DkVision.UI.Components
         {
             try
             {
-                if (!_isCapturing)
+                if (Camera != null)
                 {
                     _isCapturing = true;
                     Camera?.Capture();
