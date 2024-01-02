@@ -12,10 +12,9 @@ namespace DkVision.UI.Components
         private DkMask _mask;
         private bool _isAuto = false;
         private bool _isPainting = false;
-        private bool _isCapturing = false;
         private readonly IDkFrame _frame = new DkFrame();
         private readonly Pen _borderPen = new Pen(Brushes.Yellow);
-        private readonly List<DkMask> _lstMasks = new List<DkMask>();
+        private readonly Dictionary<string, DkMask> _dictMasks = new Dictionary<string, DkMask>();
 
         public bool IsAuto
         {
@@ -27,11 +26,7 @@ namespace DkVision.UI.Components
             get => _frame.Camera;
             set => _frame.Camera = value;
         }
-        public ShapeStyle PaintTool
-        {
-            get;
-            set;
-        }
+        public event Action<DkMask> MaskAdded;
 
         public UcFrame()
         {
@@ -41,19 +36,74 @@ namespace DkVision.UI.Components
             _frame.FrameChanged += Frame_FrameChanged;
         }
 
+        public void AddMask()
+        {
+            FrmSetMask frmSetMask = new FrmSetMask()
+            {
+                MaskName = $"Mask_{_dictMasks.Count}",
+                PaintTool = ShapeStyle.None,
+                Filter = null,
+            };
+            if (frmSetMask.ShowDialog() == DialogResult.OK)
+            {
+                if (_dictMasks.ContainsKey(frmSetMask.MaskName))
+                {
+                    MessageBox.Show($"Mask name: {frmSetMask.MaskName} is exists!\nPlease choose another name!", "Warning");
+                    frmSetMask = new FrmSetMask()
+                    {
+                        Name = frmSetMask.MaskName,
+                        Filter = frmSetMask.Filter,
+                        PaintTool = frmSetMask.PaintTool
+                    };
+                    if (frmSetMask.ShowDialog() == DialogResult.OK)
+                    {
+                        _mask = new DkMask(frmSetMask.MaskName, frmSetMask.PaintTool)
+                        {
+                            FrameSize = this.Size,
+                            Filter = frmSetMask.Filter,
+                        };
+                        MaskAdded?.Invoke(_mask);
+                    }
+                    return;
+                }
+                _mask = new DkMask(frmSetMask.MaskName, frmSetMask.PaintTool)
+                {
+                    FrameSize = this.Size,
+                    Filter = frmSetMask.Filter,
+                };
+                MaskAdded?.Invoke(_mask);
+            }
+        }
         public void CameraCapture()
         {
             try
             {
                 if (Camera != null)
                 {
-                    _isCapturing = true;
                     Camera?.Capture();
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
+            }
+        }
+        public void SetMask(string key)
+        {
+            if (_dictMasks.TryGetValue(key, out DkMask mask))
+            {
+                FrmSetMask frmSetMask = new FrmSetMask()
+                {
+                    Filter = mask.Filter,
+                    MaskName = mask.Name,
+                    PaintTool = mask.Shape
+                };
+                if (frmSetMask.ShowDialog() == DialogResult.OK)
+                {
+                    _dictMasks[key].FrameSize = this.Size;
+                    _dictMasks[key].Filter = frmSetMask.Filter;
+                    _dictMasks[key].Shape = frmSetMask.PaintTool;
+                }
             }
         }
 
@@ -66,12 +116,19 @@ namespace DkVision.UI.Components
         {
             try
             {
-                foreach (DkMask mask in _lstMasks)
+                if (!_isAuto)
                 {
-                    if (!_isAuto)
+                    foreach (DkMask mask in _dictMasks.Values)
                     {
-                        //e = mask.Execute(e);
+#if DEBUG
+                        mask.IsDebug = true;
+                        mask.Filter.IsDebug = true;
+#endif
+                        e = mask.Execute(e);
                     }
+                }
+                foreach (DkMask mask in _dictMasks.Values)
+                {
                     DrawMask(e, mask);
                 }
                 if (_isPainting)
@@ -84,15 +141,14 @@ namespace DkVision.UI.Components
             {
                 Console.WriteLine(ex);
             }
-            finally
-            {
-                _isCapturing = false;
-            }
         }
         private void DrawMask(Bitmap source, DkMask mask)
         {
             using (Graphics g = Graphics.FromImage(source))
             {
+                int x = Math.Min(mask.BeginPoint.X, mask.EndPoint.X);
+                int y = Math.Min(mask.BeginPoint.Y, mask.EndPoint.Y);
+                g.DrawString(mask.Name, DefaultFont, Brushes.Yellow, x, y);
                 switch (mask.Shape)
                 {
                     case ShapeStyle.Line:
@@ -117,7 +173,7 @@ namespace DkVision.UI.Components
             {
                 base.OnSizeChanged(e);
                 _frame?.ChangeSize(this.Size);
-                foreach (var mask in _lstMasks)
+                foreach (var mask in _dictMasks.Values)
                 {
                     mask.FrameSize = this.Size;
                 }
@@ -135,7 +191,11 @@ namespace DkVision.UI.Components
                 if (_isPainting)
                 {
                     _isPainting = false;
-                    _lstMasks.Add(_mask);
+                    if (!_dictMasks.ContainsKey(_mask.Name))
+                    {
+                        _dictMasks.Add(_mask.Name, _mask);
+                    }
+                    _mask = null;
                 }
             }
             catch (Exception ex)
@@ -148,10 +208,11 @@ namespace DkVision.UI.Components
             try
             {
                 base.OnMouseDown(e);
-                if (!_isPainting)
+                if (_mask != null && !_isPainting)
                 {
                     _isPainting = true;
-                    _mask = new DkMask(e.Location, PaintTool, this.Size);
+                    _mask.BeginPoint = e.Location;
+                    _mask.EndPoint = e.Location;
                 }
             }
             catch (Exception ex)

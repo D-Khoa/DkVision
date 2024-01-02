@@ -16,8 +16,14 @@ namespace DkVision.Core.Components
         private Point _endPoint;
         private Point _beginPoint;
         private IDkFilter _filter;
-        private readonly ShapeStyle _shape;
+        private ShapeStyle _shape;
 
+        public bool IsDebug { get; set; }
+        public Point BeginPoint
+        {
+            get => _beginPoint;
+            set => _beginPoint = value;
+        }
         public Point EndPoint
         {
             get => _endPoint;
@@ -28,6 +34,11 @@ namespace DkVision.Core.Components
             get => _frameSize;
             set => SetFrameSize(value);
         }
+        public ShapeStyle Shape
+        {
+            get => _shape;
+            set => _shape = value;
+        }
         public IDkFilter Filter
         {
             get => _filter;
@@ -37,15 +48,12 @@ namespace DkVision.Core.Components
         public double Angle => _angle;
         public Rectangle Rect => _rect;
         public Point Center => _center;
-        public ShapeStyle Shape => _shape;
-        public Point BeginPoint => _beginPoint;
+        public string Name { get; }
 
-        public DkMask(Point location, ShapeStyle shape, Size frameSize)
+        public DkMask(string name, ShapeStyle shape)
         {
+            Name = name;
             _shape = shape;
-            _frameSize = frameSize;
-            _beginPoint = location;
-            EndPoint = location;
         }
 
         public Bitmap Execute(Bitmap source)
@@ -67,11 +75,11 @@ namespace DkVision.Core.Components
                 DrawMask(imgMask);
                 using (Image<Bgr, byte> imgOut = imgSource.And(imgClone, imgMask))
                 {
-#if DEBUG
-                    CvInvoke.cvShowImage("CROP-SOURCE", imgSource.Ptr);
-                    CvInvoke.cvShowImage("CROP-MASK", imgMask.Ptr);
-                    CvInvoke.cvShowImage("CROP-OUTPUT", imgOut.Ptr);
-#endif
+                    if (IsDebug)
+                    {
+                        CvInvoke.cvShowImage($"Crop-Before ({imgSource.Width}x{imgSource.Height})", imgSource.Ptr);
+                        CvInvoke.cvShowImage($"Crop-After ({imgSource.Width}x{imgSource.Height})", imgOut.Ptr);
+                    }
                     return imgOut.Bitmap;
                 }
             }
@@ -120,7 +128,8 @@ namespace DkVision.Core.Components
                 //    , new MCvScalar(255, 255, 255), -1, Emgu.CV.CvEnum.LINE_TYPE.CV_AA, 0);
                 //break;
                 case ShapeStyle.Ellipse:
-                    CvInvoke.cvEllipse(imgMask.Ptr, Center, Rect.Size, Angle, 0, 360
+                    var size = new Size(Rect.Width / 2, Rect.Height / 2);
+                    CvInvoke.cvEllipse(imgMask.Ptr, Center, size, Angle, 0, 360
                         , new MCvScalar(255, 255, 255), -1, Emgu.CV.CvEnum.LINE_TYPE.CV_AA, 0);
                     break;
                 case ShapeStyle.None:
@@ -139,12 +148,11 @@ namespace DkVision.Core.Components
                 imgOverlay.SetValue(new Bgr(0, 0, 0), imgMask.Not());
                 using (Image<Bgr, byte> imgOut = imgSource.Or(imgOverlay))
                 {
-#if DEBUG
-                    CvInvoke.cvShowImage("OVERLAY-SOURCE", imgSource.Ptr);
-                    CvInvoke.cvShowImage("OVERLAY-OVERLAY", imgOverlay.Ptr);
-                    CvInvoke.cvShowImage("OVERLAY-MASK", imgMask.Ptr);
-                    CvInvoke.cvShowImage("OVERLAY-OUTPUT", imgOut.Ptr);
-#endif
+                    if (IsDebug)
+                    {
+                        CvInvoke.cvShowImage($"Overlay-Before ({imgSource.Width}x{imgSource.Height})", imgSource.Ptr);
+                        CvInvoke.cvShowImage($"Overlay-After ({imgOut.Width}x{imgOut.Height})", imgOut.Ptr);
+                    }
                     return imgOut.Bitmap;
                 }
             }

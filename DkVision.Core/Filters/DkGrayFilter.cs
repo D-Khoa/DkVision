@@ -7,11 +7,17 @@ namespace DkVision.Core.Filters
 {
     public class DkGrayFilter : IDkFilter
     {
+        public bool IsDebug { get; set; }
+
         public Bitmap Execute(Bitmap source)
         {
-            using (Image<Bgr, byte> imgSource = new Image<Bgr, byte>(source))
+            using (Image<Gray, byte> imgTarget = new Image<Gray, byte>(source))
             {
-                return imgSource.Convert<Gray, byte>().Bitmap;
+                if (IsDebug)
+                {
+                    CvInvoke.cvShowImage($"Gray ({imgTarget.Width}x{imgTarget.Height})", imgTarget.Ptr);
+                }
+                return imgTarget.Bitmap;
             }
         }
     }

@@ -89,26 +89,32 @@ namespace DkVision.Core.Components
         {
             lock (_lock)
             {
-                _isRunning = false;
-                using (IGrabResult result = e.GrabResult.Clone())
+                try
                 {
-                    if (result.GrabSucceeded)
+                    using (IGrabResult result = e.GrabResult.Clone())
                     {
-                        Bitmap bmp = new Bitmap(result.Width, result.Height, PixelFormat.Format32bppRgb);
-                        // Lock the bits of the bitmap.
-                        BitmapData bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadWrite, bmp.PixelFormat);
-                        //Place the pointer to the buffer of the bitmap.
-                        _converter.OutputPixelFormat = PixelType.BGRA8packed;
-                        IntPtr ptrBmp = bmpData.Scan0;
-                        _converter.Convert(ptrBmp, bmpData.Stride * bmp.Height, result);
-                        bmp.UnlockBits(bmpData);
+                        if (result.GrabSucceeded)
+                        {
+                            Bitmap bmp = new Bitmap(result.Width, result.Height, PixelFormat.Format32bppRgb);
+                            // Lock the bits of the bitmap.
+                            BitmapData bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadWrite, bmp.PixelFormat);
+                            //Place the pointer to the buffer of the bitmap.
+                            _converter.OutputPixelFormat = PixelType.BGRA8packed;
+                            IntPtr ptrBmp = bmpData.Scan0;
+                            _converter.Convert(ptrBmp, bmpData.Stride * bmp.Height, result);
+                            bmp.UnlockBits(bmpData);
 
-                        //byte[] buffer = result.PixelData as byte[];
-                        //Bitmap bmp = new Bitmap(result.Width, result.Height, result.ComputeStride() ?? result.Width
-                        //    , PixelFormat.Format24bppRgb
-                        //    , Marshal.UnsafeAddrOfPinnedArrayElement(buffer, 0));
-                        FrameChanged?.Invoke(this, bmp);
+                            //byte[] buffer = result.PixelData as byte[];
+                            //Bitmap bmp = new Bitmap(result.Width, result.Height, result.ComputeStride() ?? result.Width
+                            //    , PixelFormat.Format24bppRgb
+                            //    , Marshal.UnsafeAddrOfPinnedArrayElement(buffer, 0));
+                            FrameChanged?.Invoke(this, bmp);
+                        }
                     }
+                }
+                finally
+                {
+                    _isRunning = false;
                 }
             }
         }

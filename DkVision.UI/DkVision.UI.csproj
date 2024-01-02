@@ -51,11 +51,11 @@
     <Compile Include="Components\UcFrame.Designer.cs">
       <DependentUpon>UcFrame.cs</DependentUpon>
     </Compile>
-    <Compile Include="FrmChooseFilter.cs">
+    <Compile Include="FrmSetMask.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FrmChooseFilter.Designer.cs">
-      <DependentUpon>FrmChooseFilter.cs</DependentUpon>
+    <Compile Include="FrmSetMask.Designer.cs">
+      <DependentUpon>FrmSetMask.cs</DependentUpon>
     </Compile>
     <Compile Include="FrmMain.cs">
       <SubType>Form</SubType>
@@ -84,8 +84,8 @@
     <EmbeddedResource Include="Components\UcFrame.resx">
       <DependentUpon>UcFrame.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FrmChooseFilter.resx">
-      <DependentUpon>FrmChooseFilter.cs</DependentUpon>
+    <EmbeddedResource Include="FrmSetMask.resx">
+      <DependentUpon>FrmSetMask.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FrmMain.resx">
       <DependentUpon>FrmMain.cs</DependentUpon>

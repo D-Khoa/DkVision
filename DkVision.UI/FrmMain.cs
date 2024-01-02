@@ -25,9 +25,11 @@ namespace DkVision.UI
             #endregion
             #region Tool Buttons
             btnLive.Click += BtnLive_Click;
+            btnFilter.Click += BtnFilter_Click;
             btnCapture.Click += BtnCapture_Click;
             btnRefreshCameraList.Click += BtnRefreshCameraList_Click;
             #endregion
+            ucMainFrame.MaskAdded += UcMainFrame_MaskAdded;
         }
 
         #region Form events
@@ -56,6 +58,23 @@ namespace DkVision.UI
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
+            }
+        }
+        private void UcMainFrame_MaskAdded(DkMask obj)
+        {
+            Button btnSetMask = new Button()
+            {
+                Text = obj.Name,
+                Dock = DockStyle.Left
+            };
+            btnSetMask.Click += BtnSetMask_Click;
+            pnlMasks.Controls.Add(btnSetMask);
+        }
+        private void BtnSetMask_Click(object sender, EventArgs e)
+        {
+            if (sender is Button btn)
+            {
+                ucMainFrame.SetMask(btn.Text);
             }
         }
         private void MnuiBtnExit_Click(object sender, EventArgs e)
@@ -153,6 +172,10 @@ namespace DkVision.UI
                 Console.WriteLine(ex);
             }
         }
+        private void BtnFilter_Click(object sender, EventArgs e)
+        {
+            ucMainFrame.AddMask();
+        }
         private void BtnCapture_Click(object sender, EventArgs e)
         {
             try
@@ -170,26 +193,6 @@ namespace DkVision.UI
             {
                 _usbCamera.GetCameraList();
                 _baslerCamera.GetCameraList();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-            }
-        }
-        private void SbtnDrawTool_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
-        {
-            try
-            {
-                if (sender is ToolStripSplitButton sbtn)
-                {
-                    sbtn.Text = e.ClickedItem.Text;
-                    sbtn.Image = e.ClickedItem.Image;
-                    if (!int.TryParse(e.ClickedItem.Tag?.ToString(), out int toolId))
-                    {
-                        toolId = 0;
-                    }
-                    ucMainFrame.PaintTool = (ShapeStyle)toolId;
-                }
             }
             catch (Exception ex)
             {
