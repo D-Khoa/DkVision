@@ -7,18 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DkVision.UI", "DkVision.UI\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DkVision.Core", "DkVision.Core\DkVision.Core.csproj", "{A6DB7EFF-3F4A-4233-8752-C2BA2943F840}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{646F3990-94DE-48F6-BC27-85B7984A1F29}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "x64", "x64", "{06B80B2C-CAD6-48BF-834C-02BA2684C600}"
-	ProjectSection(SolutionItems) = preProject
-		Basler.Pylon\x64\Basler.Pylon.dll = Basler.Pylon\x64\Basler.Pylon.dll
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "x86", "x86", "{22AF2A14-FE67-4580-A379-3429A8471685}"
-	ProjectSection(SolutionItems) = preProject
-		Basler.Pylon\x86\Basler.Pylon.dll = Basler.Pylon\x86\Basler.Pylon.dll
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,10 +24,6 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{06B80B2C-CAD6-48BF-834C-02BA2684C600} = {646F3990-94DE-48F6-BC27-85B7984A1F29}
-		{22AF2A14-FE67-4580-A379-3429A8471685} = {646F3990-94DE-48F6-BC27-85B7984A1F29}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D468E931-38D1-48AC-A007-770127145B9B}
